@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tableau de scores</title>
+  <script>
+    var actions = []; // tableau pour stocker les actions effectuées
+    var equipeAPoints = 0; // variable pour stocker les points de l'équipe A
+  
+    function ajouterPoint(joueur, points) {
+        var element = document.getElementById("points-" + joueur);
+        var pointsActuels = parseInt(element.innerText);
+        element.innerText = pointsActuels + points;
+        
+        // Ajouter le point à l'équipe A
+        if (joueur.startsWith('joueur1')) {
+            equipeAPoints++;
+        }
+  
+        // Ajouter l'action "ajout de points" dans le tableau des actions
+        actions.push({ type: "ajoutPoints", joueur: joueur, points: points });
+    }
+  
+    function ajouterFaute(joueur) {
+        var element = document.getElementById("fautes-" + joueur);
+        var fautesActuelles = parseInt(element.innerText);
+        element.innerText = fautesActuelles + 1;
+  
+        // Ajouter l'action "ajout de fautes" dans le tableau des actions
+        actions.push({ type: "ajoutFautes", joueur: joueur });
+    }
+  
+    function annuler() {
+        var derniereAction = actions.pop(); // récupérer la dernière action effectuée
+  
+        if (derniereAction) {
+            // En fonction du type d'action, annuler l'opération correspondante
+            if (derniereAction.type === "ajoutPoints") {
+                var element = document.getElementById("points-" + derniereAction.joueur);
+                var pointsActuels = parseInt(element.innerText);
+                element.innerText = pointsActuels - derniereAction.points;
+                
+                // Retirer le point de l'équipe A
+                if (derniereAction.joueur.startsWith('joueur1')) {
+                    equipeAPoints--;
+                }
+            } else if (derniereAction.type === "ajoutFautes") {
+                var element = document.getElementById("fautes-" + derniereAction.joueur);
+                var fautesActuelles = parseInt(element.innerText);
+                element.innerText = fautesActuelles - 1;
+            }
+        }
+    }
+  
+    function reinitialiser() {
+        // Réinitialiser tous les éléments qui contiennent des scores et des fautes
+        var elementsPoints = document.querySelectorAll('[id^="points-"]');
+        var elementsFautes = document.querySelectorAll('[id^="fautes-"]');
+        for (var i = 0; i < elementsPoints.length; i++) {
+            elementsPoints[i].innerText = '0';
+        }
+        for (var i = 0; i < elementsFautes.length; i++) {
+            elementsFautes[i].innerText = '0';
+        }
+  
+        // Réinitialiser le temps de jeu pour tous les joueurs
+        var elementsTemps = document.querySelectorAll('[id$="-time"]');
+        for (var i = 0; i < elementsTemps.length; i++) {
+            elementsTemps[i].innerText = '0:00';
+        }
+  
+        // Réinitialiser le tableau des actions
+        actions = [];
+  
+        // Réinitialiser les points de l'équipe A
+        equipeAPoints = 0;
+    }
+// Création d'un tableau pour stocker les timers
+var timers = [];
+
+// Fonction pour lancer/arrêter le timer associé à un joueur
+function toggleTimer(player) {
+  var timerIndex = player - 1;
+  var timerElement = document.getElementById("timer" + player);
+  var buttonElement = document.getElementsByTagName("button")[timerIndex];
+
+  // Si le timer est en pause
+  if (!timers[timerIndex]) {
+    // Changement du texte du bouton
+    buttonElement.innerHTML = "Remplacé";
+    
+    // Démarrage du timer
+var startTime = Date.now();
+timers[timerIndex] = setInterval(function() {
+  var elapsedTime = Date.now() - startTime;
+  timerElement.innerHTML = formatTime(elapsedTime);
+}, 1000);
+  }
+  // Si le timer est en cours
+  else {
+    // Changement du texte du bouton
+    buttonElement.innerHTML = "Monté au jeu";
+    
+    // Arrêt du timer
+clearInterval(timers[timerIndex]);
+timers[timerIndex] = null;
+
+  }
+}
+
+// Fonction pour formater le temps en minutes:secondes
+function formatTime(elapsedTime) {
+  var seconds = Math.floor(elapsedTime / 1000);
+  var minutes = Math.floor(seconds / 60);
+  seconds %= 60;
+  return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+}
+
+
+
+                const teamAinput = document.getElementById("teamA");
+                const teamBinput = document.getElementById("teamB");
+                const teamAname = document.getElementById("teamAname");
+                const teamBname = document.getElementById("teamBname");
+                const teamAscore = document.getElementById("teamAscore");
+                const teamBscore = document.getElementById("teamBscore");
+                const teamAbutton = document.getElementById("teamAbutton");
+                const teamBbutton = document.getElementById("teamBbutton");
+
+                // Change team names
+                teamAinput.addEventListener("input", function() {
+                    teamAname.textContent = teamAinput.value;
+                });
+
+                teamBinput.addEventListener("input", function() {
+                    teamBname.textContent = teamBinput.value;
+                });
+
+                let equipeB_score = 0; // Initialisation du score de l'Equipe B à 0
+
+                function ajouterPoint(joueur, nbPoints) {
+                   let score = document.getElementById('points-' + joueur); // Récupération de l'élément qui affiche le score du joueur
+                   let scoreValue = parseInt(score.innerHTML); // Conversion du score du joueur en entier
+                   score.innerHTML = scoreValue + nbPoints; // Ajout du nombre de points au score du joueur
+                }
+
+                function ajouterButEquipeB() {
+                    equipeB_score++; // Incrémentation du score de l'Equipe B
+                    let equipeB_score_display = document.getElementById('equipeB_score'); // Récupération de l'élément qui affiche le score de l'Equipe B
+                    equipeB_score_display.innerHTML = equipeB_score; // Mise à jour de l'affichage du score de l'Equipe B
+                }
+    
+                // Ajouter le point à l'équipe A
+                if (joueur === "joueur10") {
+                   var equipeA = document.getElementById("points-equipeA");
+                   var pointsEquipeA = parseInt(equipeA.innerText);
+                   equipeA.innerText = pointsEquipeA + 1;
+                }
+
+                // Ajouter l'action "ajout de points" dans le tableau des actions
+                actions.push({ type: "ajoutPoints", joueur: joueur, points: points });
+            
+  </script>
+  
+  <style>
+  #scoreboard {
+    margin-top: 50px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    }
+
+  #changeTeamName {
+  margin-top: 50px;
+  }
+
+  label, input {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  </style>
+</head>
+<body>
+    <h1>Tableau de scores</h1>
+    <br>
+    <button onclick="reinitialiser()" style="font-size: 24px;">Remise à zéro</button><button onclick="annuler()" style="font-size: 24px;">Correction</button>
+    <br>
+    <table style="border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid black;">
+                <th style="border-right: 2px solid black;">Joueurs</th>
+                <th style="border-right: 2px solid black;">Buts</th>
+                <th style="border-right: 2px solid black;">Fautes</th>
+                <th style="border-right: 2px solid black;">Temps de jeu</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" name="joueur1" placeholder="Nom du joueur"></td>
+                <td><span id="points-joueur1" style="font-size: 28px;">0</span></td>
+                <td><span id="fautes-joueur1" style="font-size: 28px;">0</span></td>
+                <td id="joueur1-time">0:00</td>
+                <td>
+                    <button onclick="ajouterPoint('joueur1', 1)" style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueur1', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur1', 3)"style="font-size: 36px;">+3</button>
+                    <button onclick="ajouterFaute('joueur1')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                    <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(1)" style="font-size: 30px;">Monté au jeu</button>
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4"><hr></td>
+            </tr>
+            <tr>
+                <td><input type="text" name="joueur2" placeholder="Nom du joueur"></td>
+                <td><span id="points-joueur2" style="font-size: 28px;">0</span></td>
+                <td><span id="fautes-joueur2" style="font-size: 28px;">0</span></td>
+                <td id="joueur2-time">0:00</td>
+                <td>
+                    <button onclick="ajouterPoint('joueur2', 1)"style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueur2', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur2', 3)"style="font-size: 36px;">+3</button>
+                    <button onclick="ajouterFaute('joueur2')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                    <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(2)" style="font-size: 30px;">Monté au jeu</button>
+                </td>
+            <tr>
+                <td colspan="4"><hr></td>
+        </tr>
+        <tr>
+                <td><input type="text" name="joueur3" placeholder="Nom du joueur"></td>
+				<td><span id="points-joueur3" style="font-size: 28px;">0</span></td>
+				<td><span id="fautes-joueur3" style="font-size: 28px;">0</span></td>
+                <td id="joueur3-time">0:00</td>
+            <td>
+                <button onclick="ajouterPoint('joueur3', 1)"style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueur3', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur3', 3)"style="font-size: 36px;">+3</button>
+                <button onclick="ajouterFaute('joueur3')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(3)" style="font-size: 30px;">Monté au jeu</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><hr></td>
+        </tr>
+          <tr>
+           <td><input type="text" name="joueur4" placeholder="Nom du joueur"></td>
+				<td><span id="points-joueur4" style="font-size: 28px;">0</span></td>
+				<td><span id="fautes-joueur4" style="font-size: 28px;">0</span></td>
+                <td id="joueur4-time">0:00</td>
+           <td>
+            <button onclick="ajouterPoint('joueur4', 1)"style="font-size: 36px;">+1</button>
+                <button onclick="ajouterPoint('joueur4', 2)"style="font-size: 36px;">+2</button>
+                <button onclick="ajouterPoint('joueur4', 3)"style="font-size: 36px;">+3</button>
+            <button onclick="ajouterFaute('joueur4')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+            <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(4)" style="font-size: 30px;">Monté au jeu</button>
+        </tr>
+        <tr>
+            <td colspan="4"><hr></td>
+       </tr>
+        <tr>
+            <td><input type="text" name="joueur5" placeholder="Nom du joueur"></td>
+				<td><span id="points-joueur5" style="font-size: 28px;">0</span></td>
+				<td><span id="fautes-joueur5" style="font-size: 28px;">0</span></td>
+                <td id="joueur5-time">0:00</td>
+            <td>
+                <button onclick="ajouterPoint('joueur5', 1)"style="font-size: 36px;">+1</button>
+                <button onclick="ajouterPoint('joueur5', 2)"style="font-size: 36px;">+2</button>
+                <button onclick="ajouterPoint('joueur5', 3)"style="font-size: 36px;">+3</button>
+                <button onclick="ajouterFaute('joueur5')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(5)" style="font-size: 30px;">Monté au jeu</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><hr></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="joueur6" placeholder="Nom du joueur"></td>
+            <td><span id="points-joueur6" style="font-size: 28px;">0</span></td>
+            <td><span id="fautes-joueur6" style="font-size: 28px;">0</span></td>
+            <td id="joueur6-time">0:00</td>
+                <td>
+                    <button onclick="ajouterPoint('joueur6', 1)"style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueur6', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur6', 3)"style="font-size: 36px;">+3</button>
+                    <button onclick="ajouterFaute('joueur6')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                    <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(6)" style="font-size: 30px;">Monté au jeu</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><hr></td>
+        </tr>
+            <tr>
+				<td><input type="text" name="joueur7" placeholder="Nom du joueur"></td>
+				<td><span id="points-joueur7" style="font-size: 28px;">0</span></td>
+				<td><span id="fautes-joueur7" style="font-size: 28px;">0</span></td>
+                <td id="joueur7-time">0:00</td>
+				<td>
+                    <button onclick="ajouterPoint('joueur7', 1)"style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueur7', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur7', 3)"style="font-size: 36px;">+3</button>
+                    <button onclick="ajouterFaute('joueur7')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                    <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(7)" style="font-size: 30px;">Monté au jeu</button>
+				</td>
+			</tr>
+            <tr>
+                <td colspan="4"><hr></td>
+        </tr>
+            <tr>
+				<td><input type="text" name="joueur8" placeholder="Nom du joueur"></td>
+				<td><span id="points-joueur8" style="font-size: 28px;">0</span></td>
+				<td><span id="fautes-joueur8" style="font-size: 28px;">0</span></td>
+                <td id="joueur8-time">0:00</td>
+				<td>
+                    <button onclick="ajouterPoint('joueur8', 1)"style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueur8', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur8', 3)"style="font-size: 36px;">+3</button>
+                    <button onclick="ajouterFaute('joueur8')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                    <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(8)" style="font-size: 30px;">Monté au jeu</button>
+				</td>
+			</tr>
+            <tr>
+                <td colspan="4"><hr></td>
+        </tr>
+            <tr>
+				<td><input type="text" name="joueur9" placeholder="Nom du joueur"></td>
+				<td><span id="points-joueur9" style="font-size: 28px;">0</span></td>
+				<td><span id="fautes-joueur9" style="font-size: 28px;">0</span></td>
+                <td id="joueur9-time">0:00</td>
+				<td>
+                    <button onclick="ajouterPoint('joueur9', 1)"style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueu9', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur9', 3)"style="font-size: 36px;">+3</button>
+                    <button onclick="ajouterFaute('joueur9')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                    <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(9)" style="font-size: 30px;">Monté au jeu</button>
+				</td>
+			</tr>
+            <tr>
+                <td colspan="4"><hr></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="joueur10" placeholder="Nom du joueur"></td>
+            <td><span id="points-joueur10" style="font-size: 28px;">0</span></td>
+            <td><span id="fautes-joueur10" style="font-size: 28px;">0</span></td>
+            <td id="joueur10-time">0:00</td>
+            <td>
+                <button onclick="ajouterPoint('joueur10', 1)"style="font-size: 36px;">+1</button>
+                    <button onclick="ajouterPoint('joueur10', 2)"style="font-size: 36px;">+2</button>
+                    <button onclick="ajouterPoint('joueur10', 3)"style="font-size: 36px;">+3</button>
+                <button onclick="ajouterFaute('joueur10')" style="background-color: red; color: white; font-size: 24px; padding: 12px 24px;">Faute</button>
+                <button class="remplacement" id="joueur1-remplacement" onclick="togglePlayerTimer(10)" style="font-size: 30px;">Monté au jeu</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><hr></td>
+        </tr>
+
+    <div id="scoreboard">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2"><h1>Score</h1></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="teamAname">Equipe A</td>
+                    <td id="teamAscore">0</td>
+                </tr>
+                <tr>
+                    <td id="teamBname">Equipe B</td>
+                    <td id="teamBscore">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="changeTeamName">
+        <label for="teamA">Nom de l'Equipe A :</label>
+        <input type="text" id="teamA" value="Equipe A">
+        <label for="teamB">Nom de l'Equipe B :</label>
+        <input type="text" id="teamB" value="Equipe B">
+    </div>
+</body>
+</html>
